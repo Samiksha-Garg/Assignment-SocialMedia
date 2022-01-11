@@ -6,14 +6,15 @@ class PostDeatils {
   final String uploader;
   final String uploaderImage;
   final List<String> hashtags;
-  int likes = 0;
-  int comments = 0;
-  int sent = 0;
+  final int likes;
+  final int comments;
 
   PostDeatils(
       {required this.imageLink,
       required this.caption,
       required this.uploader,
       required this.uploaderImage,
-      required this.hashtags});
+      required this.hashtags,
+      required this.likes,
+      required this.comments});
 }
