@@ -1,25 +1,27 @@
 import 'dart:ui';
 
+import 'package:assign_social_media/PostView/post.view.dart';
+import 'package:assign_social_media/utlis/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:assign_social_media/models/post.model.dart';
 
-class FeedView extends StatelessWidget {
+class FeedView extends StatefulWidget {
   const FeedView({Key? key}) : super(key: key);
 
   @override
+  State<FeedView> createState() => _FeedViewState();
+}
+
+class _FeedViewState extends State<FeedView> {
+  @override
   Widget build(BuildContext context) {
-    PostDeatils postDeatils1 = PostDeatils(
-        imageLink: "assets/images/circus.jpg",
-        caption:
-            'This circus nearby my apartment looks so nice and cool, and makes me feel so happy',
-        uploader: "Michelle Jonas",
-        uploaderImage: "assets/images/profile2.jpg",
-        hashtags: ['asthetics', 'analog', 'colors'],
-        likes: 725,
-        comments: 63);
+    List<PostDeatils> postDeatils = [
+      PostConstants.postDetails1,
+      PostConstants.postDeatils2
+    ];
 
     final size = MediaQuery.of(context).size;
     return Scaffold(
@@ -89,123 +91,166 @@ class FeedView extends StatelessWidget {
               height: 30,
             ),
             Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    postWidget(size, postDeatils1),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    // postWidget(size, postDeatils1)
-                  ],
-                ),
-              ),
-            )
+                child: ListView.builder(
+                    padding: const EdgeInsets.all(0),
+                    itemCount: postDeatils.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return postTile(
+                          size: size, postDetails: postDeatils[index]);
+                    }))
           ],
         ),
       ),
     );
   }
+}
 
-  SizedBox postWidget(Size size, PostDeatils postDeatils) {
-    return SizedBox(
-      height: size.height * 0.60,
-      width: double.infinity,
-      child: Stack(
+class postTile extends StatelessWidget {
+  final Size size;
+  final PostDeatils postDetails;
+
+  const postTile({Key? key, required this.size, required this.postDetails})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+      child: Column(
         children: [
           SizedBox(
             height: size.height * 0.60,
             width: double.infinity,
-            child: FittedBox(
-                child: Image(
-                  image: AssetImage(postDeatils.imageLink),
-                  height: size.height * 0.65,
-                ),
-                fit: BoxFit.fill),
-          ),
-          Positioned(
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Container(
-                  height: size.height * 0.35,
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.18),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        sideButton(FontAwesome5.heart, Colors.red),
-                        Text(
-                          postDeatils.likes.toString(),
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        sideButton(FontAwesome.comment_empty, Colors.white),
-                        Text(
-                          postDeatils.comments.toString(),
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        sideButton(Icons.send, Colors.white),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            top: size.height * 0.09,
-            right: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
+            child: Stack(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: AssetImage(postDeatils.uploaderImage),
-                      radius: 15,
+                SizedBox(
+                  height: size.height * 0.60,
+                  width: double.infinity,
+                  child: FittedBox(
+                      child: Image(
+                        image: AssetImage(postDetails.imageLink),
+                      ),
+                      fit: BoxFit.fill),
+                ),
+                Positioned(
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Container(
+                        height: size.height * 0.35,
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.18),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              sideButton(
+                                  iconData: postDetails.liked
+                                      ? FontAwesome5.heart
+                                      : FontAwesome.heart_empty,
+                                  color: postDetails.liked
+                                      ? Colors.red
+                                      : Colors.white),
+                              Text(
+                                postDetails.likes.toString(),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const sideButton(
+                                  iconData: FontAwesome.comment_empty,
+                                  color: Colors.white),
+                              Text(
+                                postDetails.comments.toString(),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const sideButton(
+                                  iconData: Icons.send, color: Colors.white),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                    Text(
-                      ' ' + postDeatils.uploader + ' ',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
-                Text(
-                  postDeatils.caption,
-                  style: const TextStyle(
-                    color: Colors.white,
                   ),
-                  overflow: TextOverflow.visible,
+                  top: size.height * 0.09,
+                  right: 5,
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Text(
-                  '#asthetics #analog #colors',
-                  style: TextStyle(
-                    color: Colors.white,
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 10, right: 10, bottom: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage:
+                                AssetImage(postDetails.uploaderImage),
+                            radius: 15,
+                          ),
+                          Text(
+                            ' ' + postDetails.uploader + ' ',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        postDetails.caption,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        postDetails.hasthagsToString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
                   ),
-                  overflow: TextOverflow.visible,
-                ),
+                )
               ],
             ),
+          ),
+          const SizedBox(
+            height: 20,
           )
         ],
       ),
+      onPressed: () {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PostView(
+                      postDeatils: postDetails,
+                    )));
+      },
     );
   }
+}
 
-  ClipRect sideButton(IconData iconData, Color color) {
+class sideButton extends StatelessWidget {
+  final IconData iconData;
+  final Color color;
+
+  const sideButton({Key? key, required this.iconData, required this.color})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

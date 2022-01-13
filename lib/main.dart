@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'styles/palette.dart';
 import 'HomeView/homeMain.view.dart';
 import 'styles/colors.dart';
@@ -16,11 +17,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
         theme: ThemeData(
             primaryColor: AppColors.pastelBlue,
             primarySwatch: Palette.theme,
             bottomAppBarColor: const Color(0xfff7f7f9)),
-        home: const PostView());
+        home: const HomeMainView());
   }
 }
